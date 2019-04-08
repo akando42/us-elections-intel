@@ -2,7 +2,6 @@
 library(quantmod)
 library(highcharter)
 
-
 ## Drawing stock symbol chart
 stock_time_series <- function(symbol,title,subtitle){
   timeseries_data <- getSymbols(symbol, src="yahoo", auto.assign = FALSE)
@@ -31,19 +30,25 @@ hc <- highchart(type = "stock") %>%
   hc_add_series(usecnh, id = "usecnh")
 hc
 
+
 ## CORPORATE BOND INDEX
 corp_index <- getSymbols("BAMLC0A4CBBBEY", src="FRED", auto.assign = FALSE)
 corp_chart <-  highchart(type="stock") %>%
   hc_title(text="Corporate Bond Index") %>%
   hc_subtitle(text="Corporate Bond Data from FRED ") %>%
   hc_add_series(corp_index, "corp_index")
-
 corp_chart
+
 
 ## CONSUMER CREDIT DEFAULT RATE
 default_rate <- getSymbols("DRCCLACBN", src="FRED", auto.assign=FALSE)
+corp_index <- getSymbols("BAMLC0A4CBBBEY", src="FRED", auto.assign = FALSE)
+age_payroll_ratio <- age_payroll$ratio
+
 hc <- highchart(type = "stock") %>% 
-  hc_title(text = "Charting some Symbols") %>% 
-  hc_subtitle(text = "Data extracted using quantmod package") %>% 
-  hc_add_series(default_rate, id="default")
+  hc_title(text = "CCDR") %>% 
+  hc_subtitle(text = "DLROCL ") %>% 
+  hc_add_series(default_rate, id="consumerCredit") %>% 
+  hc_add_series(corp_index, id="corp_BBB") %>% 
+  hc_add_series(age_payroll_ratio, id="payroll_workingage")
 hc
