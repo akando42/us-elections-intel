@@ -50,5 +50,16 @@ pres <- pres %>%
 # minmum sample per district
 
 unpresidential_by_district <- mutate(unpresidential_by_district, sample_size = sqrt(sample_size))
-unpresidential_by_district <- mutate(unpresidential_by_district, sample_size_2_percent = (0.02/1.96)^2/(dem*rep))
+unpresidential_by_district <- mutate(unpresidential_by_district, sample_size_2_percent = (dem*rep)/(0.02/1.96)^2)
+Unique_Pres <- unpresidential_by_district[!duplicated(unpresidential_by_district$district),]
+
+Unique_Predictable <- filter(Unique_Pres, Unique_Pres$sample_size_winning_margin < 30)
+Unique_Close <- filter(Unique_Pres, Unique_Pres$sample_size_winning_margin > 30)
+
+eqn = function(x){
+  sqrt(x)*10
+}
+
+curve(eqn, from=0, to=2*pi, n=2000, xlab="Y", ylab="X", col="blue",lwd=2, main="the CURVE")
+
 
