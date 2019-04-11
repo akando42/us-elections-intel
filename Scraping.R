@@ -60,7 +60,7 @@ get_website <- function(html, index){
   return(website)
 }
 
-contact_email <- function(website){
+website_contact_email <- function(website){
   print("GETTING EMAIL")
   url <- as.character(website)
   print(url)
@@ -70,6 +70,39 @@ contact_email <- function(website){
   email <- html_attr(selected_node, "href")
   email <- substr(email, 8, nchar(email))
   return(email)
+}
+
+clutch_contact_email <- function(url){
+  html <- read_html(url)
+  email_xpath <- '//*[@id="block-system-main"]/div/div[1]/ul/li[2]/div[2]/div[2]/div[1]/div/div'
+  selected_node <- html_nodes(html, xpath=email_xpath)
+  text <- html_text(selected_node)
+  print(text)
+  semicolon <- regexpr(";", text)[1]
+  semicolons <- gregexpr(";", text)
+  positions <- semicolons[[1]]
+  first <- positions[1]
+  last <- positions[length(positions)]
+  email <- substr(text, 18, semicolon-2)
+  mailto <- regexpr("mailto:", text)
+  elements <- strsplit(email, "#")
+  swap <- substr(text, mailto+8, last)
+  print(swap)
+  coordinates <- gregexpr("]", swap)
+  coordinates <- coordinates[[1]]
+  print("MY COORDINATES")
+  print(coordinates) 
+  print("MY ELEMENT")
+  print(elements)
+  emails <- c()
+  for(coordinate in coordinates){
+    print(coordinate)
+    secret <- substring(swap, coordinate-1, coordinate-1)
+    secret <- as.numeric(secret) + 1
+    emails <- c(emails, elements[[1]][as.numeric(secret)])
+  }
+  precious_email <- paste(emails, collapse="")
+  return(precious_email)
 }
 
 extract_info <- function(link){
@@ -99,7 +132,8 @@ for(link in targets$url){
   it_agencies <- rbind(it_agencies, info)
 }
 
-for (i in c(1:359)){
+## Getting from Website
+for (i in c(1:356)){
   print(i)
   website <- it_agencies$website[i]
   try(
@@ -107,9 +141,13 @@ for (i in c(1:359)){
   )
 }
 
-
-
-
-
+## Getting from Clutch
+for (i in c(1:356)){
+  print(i)
+  url <- as.character(it_agencies$url[i])
+  try(
+    it_agencies$clutch_email[i] <- clutch_contact_email(url)
+  )
+}
 
 ## Web Scraping from Trust Pilot
