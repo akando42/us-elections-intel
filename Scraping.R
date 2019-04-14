@@ -6,6 +6,9 @@ twitter_api_secret <- "VNV26E12wzIT18mOZkWpIc8HkzMFE719mrCn4fnLoKRkK1o2d0"
 twitter_access_token <- "432138255-Fq1KA00FKusSmuXNCY2n3jnirvuU3DjhMXHlminw"
 twitter_access_secret <- "iYWbMOyLF6hLZ73inEoycud37eo7Ph6dKIl0kz2lHBk9b"
 
+## Getting Data from Twitter
+result <- setup_twitter_oauth(twitter_api_key, twitter_api_secret)
+
 
 library(tidyverse) ## Data Wraggling
 library(rvest)     ## Passing HTML/XML content
@@ -13,9 +16,6 @@ library(stringr)   ## String Manipulation
 library(rebus)     ## Regular Expression
 library(lubridate) ## Time Format manipulation
 library(dplyr)     ## Data Manipulation
-
-## Getting Data from Twitter
-result <- setup_twitter_oauth(twitter_api_key, twitter_api_secret)
 
 
 ## Agency Lead Generation from Clutch
@@ -105,32 +105,40 @@ clutch_contact_email <- function(url){
   return(precious_email)
 }
 
-extract_info <- function(link){
+extract_info <- function(link, index){
   html <- read_html(link)
-  name <- get_name(html, 1)
-  profile <- profile_link(html,1)
-  website <- get_website(html,1)
-  # tryCatch({
-  #   message("trying to get email")
-  #   email <- contact_email(website)
-  #   return(email)
-  # }, error=function(cond){
-  #   message(cond)
-  #   email <- "no@email.com"
-  #   return(email)
-  # })
+  name <- get_name(html, index)
+  profile <- profile_link(html,index)
+  website <- get_website(html,index)
   print(name)
   print(profile)
   print(website)
-  #print(email)
   return(data.frame(name=name, url=profile, website=website))
 }
 
-for(link in targets$url){
-  print(link)
-  info <- extract_info(link)
-  it_agencies <- rbind(it_agencies, info)
+new_batch <- function(index){
+  batch <- data.frame(name=character(), url=character(), website=character())
+  for(link in targets$url){
+    info <- extract_info(link, index)
+    batch <- rbind(batch, info)
+  }
+  return(batch)
 }
+
+## Getting from Clutch
+acquire <- function(index){
+  batch <- new_batch(index)
+  for (i in c(1:356)){
+    print(i)
+    url <- as.character(batch$url[i])
+    try(
+      batch$clutch_email[i] <- clutch_contact_email(url)
+    )
+  }
+  name <- paste0(index, '_batch.csv')
+  write.csv(batch, name)
+}
+
 
 ## Getting from Website
 for (i in c(1:356)){
@@ -140,14 +148,3 @@ for (i in c(1:356)){
     it_agencies$email[i] <- contact_email(website)
   )
 }
-
-## Getting from Clutch
-for (i in c(1:356)){
-  print(i)
-  url <- as.character(it_agencies$url[i])
-  try(
-    it_agencies$clutch_email[i] <- clutch_contact_email(url)
-  )
-}
-
-## Web Scraping from Trust Pilot

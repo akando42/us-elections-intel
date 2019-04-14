@@ -10,11 +10,9 @@ USArrests <- mutate(USArrests, "woe-name" = rownames(USArrests))
 hcmap(map = "countries/us/us-all", data = USArrests,
       joinBy = "woe-name", value = "UrbanPop", name = "Urban Population")
 
-
 ## UNPRESIDENTIAL LMAO
 pres_poll_by_state <- politicaldata::pres_results
 unpresidential_poll_by_district <- politicaldata::house_results
-
 
 pres_by_state <- pres_poll_by_state %>%
   filter(year%in%2015:2017) %>%
