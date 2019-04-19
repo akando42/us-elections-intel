@@ -2,7 +2,6 @@ library(politicaldata)
 library(highcharter)
 library(dplyr)
 
-
 ## ARREST DATA
 data("USArrests", package = "datasets")
 USArrests <- mutate(USArrests, "woe-name" = rownames(USArrests))

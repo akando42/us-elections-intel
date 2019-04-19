@@ -2,8 +2,9 @@
 library(gmailr)
 library(mboxr)
 library(mongolite)
-library(bigrquery)
+library(stringr)
 
+remotes::install_github("rich-iannone/blastula")
 clientID <- "523368976811-6qd08vrl9sekpdal583t99hs3467o7fi.apps.googleusercontent.com"
 clientSecret <- "2MDr5xzN-ty32K7OGKutFzu0"
 
@@ -30,7 +31,6 @@ get_email <- function(term){
   return(messages_df)
 }
 
-
 ## Send Email
 send_email <- function(from, to, subject, body){
   email_content <- mime(
@@ -42,13 +42,20 @@ send_email <- function(from, to, subject, body){
   send_message(email_content)
 }
 
+## Parse Email from Gmail
 parse_email <- function(mbox_file){
   parsed <- read_mbox(mbox_file)
 }
 
-insertMongo <- function(data) {
-  con <- mongo("emails", url = "mongodb+srv://troydo42:milkyway42@melior-gebrv.mongodb.net/emails?retryWrites=true")
+# Insert to Mongo
+insertMongo <- function(data, collection) {
+  db_url <- paste0("mongodb+srv://troydo42:milkyway42@melior-gebrv.mongodb.net/", collection,"?retryWrites=true")
+  con <- mongo(collection, url = db_url)
   con$insert(data)
 }
 
- 
+## Remove NA from our list
+removeNA <- function(data){
+  data <- str_remove(data,"NA")
+  return(data)
+}
