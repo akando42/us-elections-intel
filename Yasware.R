@@ -77,14 +77,6 @@ mailgun_track <- function(domain, recipient, begin){
 }
 # Sample
 # mailgun_track("influencerwiz.com", "troy@quarry.team", "Fri, 18 April 2019 17:00:00 -0000")
-
-
-
-
-
-
-
-
 # r <- plumb("Yasware.R")
 # r$run(port=6969)
 
