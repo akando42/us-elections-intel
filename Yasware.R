@@ -136,20 +136,21 @@ mailgun_hourly_chart <- function(data){
 }
 
 mailgun_daily_chart <- function(data){
-  start_hour <- min(data$Date)
-  end_hour <- max(data$Date)
-  email_chart_data <- data.frame(hour=numeric(), received=numeric(), opened=numeric())
-  for (i in start_hour:end_hour){
-    print(class(i))
-    email <- filter(data, data$Date == i)
+  start_date <- min(data$Date)
+  end_date <- max(data$Date)
+  email_chart_data <- data.frame(date=numeric(), received=numeric(), opened=numeric())
+  for (i in start_date:end_date){
+    email <- filter(data, data$Date == formatC(i, width=2, flag="0"))
+    print(i)
+    print(nrow(email))
     tryCatch(received <- email %>% filter(email$Status =="accepted") %>% nrow(),error=function(){return(received <- 0)})
     tryCatch(opened <- email %>% filter(email$Status == "opened") %>% nrow(), error=function(){return(opened <- 0)})
-    email_chart_data <- add_row(email_chart_data, hour=i, received=received, opened=opened)
+    email_chart_data <- add_row(email_chart_data, date=i, received=received, opened=opened)
   }
   hc <- highchart() %>% 
-    hc_xAxis(categories = email_chart_data$Date) %>% 
+    hc_xAxis(categories = email_chart_data$date) %>% 
     hc_add_series(name = "Opened", data = email_chart_data$opened) %>%
-    hc_add_series(name = "Received", data = email_chart_data$received) %>% 
+    hc_add_series(name = "Sent", data = email_chart_data$received) %>% 
     hc_add_theme(hc_theme_chalk()) %>%
     hc_title(text="Yasware Email Stats")
   return(hc)
