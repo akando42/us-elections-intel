@@ -13,7 +13,6 @@ stock_time_series <- function(symbol,title,subtitle){
     hc_add_series(timeseries_data)
   chart
 }
-
 compare_payroll_vs_workingage <- function(){
   payroll_population <- getSymbols("PAYEMS", src="FRED", auto.assign=FALSE)  
   working_age <- getSymbols("LFWA64TTUSM647S", src="FRED", auto.assign=FALSE)

@@ -29,7 +29,6 @@ page_html <- read_html(targets$url[1])
 xpath_listing <- '//*[@id="directory"]/div/div[2]/div/div[1]/div'
 xpath_profile <- '//*[@id="directory"]/div/div[2]/div/div[1]/div/ul/li[1]/div/div[2]/ul/li[2]/a'
 
-
 it_agencies <- data.frame(name=character(), url=character(), website=character(), email=character())
 
 get_name <- function(html,index){
@@ -138,7 +137,6 @@ acquire <- function(index){
   name <- paste0(index, '_batch.csv')
   write.csv(batch, name)
 }
-
 
 ## Getting from Website
 for (i in c(1:356)){

@@ -11,11 +11,12 @@ validation_key <- "pubkey-511bebebd999a57e2bcc4d85f86f0233"
 username <- "troy@topflightapps.com"
 
 base_url <- "https://api.mailgun.net/v3/"
-api_key <- "key-f8c4ea5af0feb19eb1dabd9733976b79"
+
 domain <- "influencerwiz.com"
 
 # Checking Authentication
-mailgun_authenticate <- function(domain, api_key){
+mailgun_authenticate <- function(domain){
+  api_key <- "key-f8c4ea5af0feb19eb1dabd9733976b79"
   authentication_url <- paste0(base_url,"domains/",domain,"/credentials")
   r <- GET(authentication_url, authenticate("api",api_key))
   response <- content(r, "parsed")
@@ -78,6 +79,8 @@ mailgun_broad_track <- function(domain, begin){
   tracking_data$Date <- format(tracking_data$Datetime, format="%d")
   return(tracking_data)
 }
+# Sample
+# mailgun_broad_track("influencerwiz.com", "Mon, 01 April 2019 17:00:00 -0000")
 
 # Track Emal Sent, Delivered, Open and Click by Recipients
 mailgun_targeted_track <- function(domain, recipient, begin){
@@ -112,9 +115,9 @@ mailgun_targeted_track <- function(domain, recipient, begin){
   return(tracking_data)
 }
 # Sample
-# mailgun_targeted_track("influencerwiz.com", "troy@quarry.team", "Fri, 01 April 2019 17:00:00 -0000")
+# mailgun_targeted_track("influencerwiz.com", "troy@quarry.team", "Fri, 19 April 2019 17:00:00 -0000")
 
-# Draw chart from stats collected
+# Draw Hourly Chart from stats collected
 mailgun_hourly_chart <- function(data){
   start_hour <- min(data$Hours)
   end_hour <- max(data$Hours)
@@ -135,6 +138,7 @@ mailgun_hourly_chart <- function(data){
   return(hc)
 }
 
+# Draw Daily Chart from stats collected
 mailgun_daily_chart <- function(data){
   start_date <- min(data$Date)
   end_date <- max(data$Date)
